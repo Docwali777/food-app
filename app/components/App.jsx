@@ -33,7 +33,8 @@ class TableBody extends React.Component{
 constructor(props){
   super(props)
 this.state = {
-  shoppingList: this.props.shoppingList
+  shoppingList: this.props.shoppingList,
+  isEditing: false
 }
 }
 deleteItem = () =>{
@@ -41,17 +42,50 @@ var {foodName, ingredients} = this.props;
   this.props.deleteFoodItem(foodName)
 }
 
+
+
+
+editFoodItem = ()=>{
+
+  var {foodName, ingredients} = this.props;
+  if(!this.state.isEditing){
+        return(
+
+              <tr>
+                <td>{foodName}</td>
+                <td>{ingredients}</td>
+                <td><button className="btn btn-info"   onClick={()=>this.edit()}>Edit</button></td>
+                <td><button className="btn btn-danger" onClick={this.deleteItem} >Delete</button></td>
+              </tr>
+          )
+}
+else {
+return(    <tr>
+      <td>
+        <input
+        defaultValue={foodName} />
+      </td>
+      <td>{ingredients}</td>
+      <td><button className="btn btn-success"   onClick={()=>this.saveEdit()}>Save</button></td>
+    </tr>)
+
+}
+}
+edit = () => {
+  this.setState({isEditing: true})
+
+  console.log(2)
+}
+saveEdit = ()=>{
+  this.setState({isEditing: false})
+  this.editFoodItem()
+  console.log(2)
+}
+
   render(){
 var {foodName, ingredients} = this.props;
     return(
-      <tbody>
-          <tr>
-            <td>{foodName}</td>
-            <td>{ingredients}</td>
-            <td><button>Edit</button></td>
-            <td><button onClick={this.deleteItem} >Delete</button></td>
-          </tr>
-      </tbody>
+      <tbody>{this.editFoodItem()}</tbody>
     )
   }
 }

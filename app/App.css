@@ -1,0 +1,6 @@
+table, th, tr, td {
+text-align: center;
+}
+td {
+  width: 300px;
+}

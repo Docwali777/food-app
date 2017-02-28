@@ -42,12 +42,12 @@ var {foodName, ingredients} = this.props;
   this.props.deleteFoodItem(foodName)
 }
 
-
-
-
 editFoodItem = ()=>{
 
   var {foodName, ingredients} = this.props;
+
+
+
   if(!this.state.isEditing){
         return(
 
@@ -63,32 +63,46 @@ else {
 return(    <tr>
       <td>
         <input
+          ref="foodName"
         defaultValue={foodName} />
       </td>
-      <td>{ingredients}</td>
-      <td><button className="btn btn-success"   onClick={()=>this.saveEdit()}>Save</button></td>
+      <td>
+        <input
+          ref="ingredients"
+          defaultValue={ingredients}
+        />
+      </td>
+      <td><button className="btn btn-success"   onClick={this.saveEdit.bind(this)}>Save</button></td>
     </tr>)
 
 }
 }
 edit = () => {
   this.setState({isEditing: true})
-
-  console.log(2)
 }
 saveEdit = ()=>{
   this.setState({isEditing: false})
-  this.editFoodItem()
-  console.log(2)
+
+var {foodName, ingredients} = this.props
+
+
+foodName = this.refs.foodName.value
+ingredients = this.refs.ingredients.value
+var food = {foodName, ingredients}
+
+this.props.onSaveEdit(this.props.foodName, food)
+
 }
 
   render(){
-var {foodName, ingredients} = this.props;
+// var {foodName, ingredients} = this.state;
+
     return(
       <tbody>{this.editFoodItem()}</tbody>
     )
   }
 }
+
 class FoodForm extends React.Component{
 constructor(props){
   super(props)
@@ -132,13 +146,20 @@ const shoppingList = [
           ingredients: "Broth"}
 ]
 
+
+
+// -----------
 //Main compoenent to be rendered
 export default class App extends React.Component {
 constructor(props){
   super(props)
   this.state = {
-    shoppingList: shoppingList
+    shoppingList: JSON.parse(localStorage.getItem("_Docwali777_recipes"))
+
   }
+  var toStorage = localStorage.setItem("_Docwali777_recipes", JSON.stringify(this.state.shoppingList))
+
+  var fromStorage = JSON.parse(localStorage.getItem("_Docwali777_recipes"))
 }
 
 enterFood = (food) =>{
@@ -150,15 +171,35 @@ let newFoods = this.state.shoppingList.filter(foods=> foods.foodName !== food)
 this.setState({shoppingList: newFoods})
 
 }
+saveEdit(previous, curr){
+var edit = this.state.shoppingList.filter(foods=>{
+  return    foods.foodName === previous
+})
+var index = this.state.shoppingList.indexOf(edit[0])
+this.state.shoppingList.splice(index, 1, curr)
+this.setState({shoppingList: this.state.shoppingList})
+}
 
+localStorage(){
+  var toStorage = localStorage.setItem("_Docwali777_recipes", JSON.stringify(this.state.shoppingList))
+
+  var fromStorage = JSON.parse(localStorage.getItem("_Docwali777_recipes"))
+
+  return(
+    <div>
+    <FoodForm  enterFood={this.enterFood} />
+      <TableOfFood listOfFoods={fromStorage.map((foods, key)=>
+            <TableBody onSaveEdit={this.saveEdit.bind(this)} key={key} {...foods} shoppingList={this.state.shoppingList} deleteFoodItem={this.deleteFoodItem.bind(this)}  />) }/>
+    </div>
+  )
+}
 
   render() {
+
     return (
-      <div>
-      <FoodForm  enterFood={this.enterFood} />
-        <TableOfFood listOfFoods={this.state.shoppingList.map((foods, key)=>
-              <TableBody key={key} {...foods} shoppingList={this.state.shoppingList} deleteFoodItem={this.deleteFoodItem.bind(this)}  />) }/>
-      </div>
+  <div>
+    {this.localStorage()}
+  </div>
     )
   }
 }

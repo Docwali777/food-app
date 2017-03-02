@@ -1,6 +1,20 @@
-table, th, tr, td {
-text-align: center;
-}
-td {
-  width: 300px;
+/*$margin: 20px
+$spanbgColor: yellow
+$button-margin: 10px
+
+.foodForm
+  text-align: center
+  color: white
+  background: black
+
+.foodGroup
+  margin: $margin
+
+.foodTitle
+  background: $spanbgColor
+
+button
+  margin: $button-margin*/
+h3 {
+  text-align: center
 }
